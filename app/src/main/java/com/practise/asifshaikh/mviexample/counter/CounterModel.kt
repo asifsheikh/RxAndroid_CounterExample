@@ -1,7 +1,9 @@
 package com.practise.asifshaikh.mviexample.counter
 
+import com.practise.asifshaikh.mviexample.counter.usecases.DecrementUseCase
+import com.practise.asifshaikh.mviexample.counter.usecases.IncrementUseCase
 import io.reactivex.Observable
-import io.reactivex.rxkotlin.withLatestFrom
+import io.reactivex.Observable.mergeArray
 import io.redgreen.oneway.SourceEvent
 import io.redgreen.oneway.usecases.SourceCreatedUseCase
 import io.redgreen.oneway.usecases.SourceRestoredUseCase
@@ -20,9 +22,6 @@ object CounterModel {
         val sourceRestoredState = sourceEvents
                 .filter { it == SourceEvent.RESTORED }
                 .withLatestFrom(timeline) { _, state -> state }
-        */
-        val sourceCreatedStates = sourceEvents.compose(SourceCreatedUseCase(CounterState.ZERO))
-        val sourceRestoredStates = sourceEvents.compose(SourceRestoredUseCase(timeline))
 
         val incrementStates = intentions
                 .ofType(IncrementCounterIntention::class.java)
@@ -31,12 +30,13 @@ object CounterModel {
         val decrementStates = intentions
                 .ofType(DecrementCounterIntention::class.java)
                 .withLatestFrom(timeline) { _, state -> state.add(-1) }
+        */
 
-        return Observable.mergeArray(
-                sourceCreatedStates,
-                sourceRestoredStates,
-                incrementStates,
-                decrementStates
+        return mergeArray(
+                sourceEvents.compose(SourceCreatedUseCase(CounterState.ZERO)),
+                sourceEvents.compose(SourceRestoredUseCase(timeline)),
+                intentions.ofType(IncrementCounterIntention::class.java).compose(IncrementUseCase(timeline)),
+                intentions.ofType(DecrementCounterIntention::class.java).compose(DecrementUseCase(timeline))
         )
     }
 }
