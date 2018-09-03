@@ -19,6 +19,11 @@ object AppleModel {
                 .map { it.count }
                 .withLatestFrom(timeline) { count, state -> state.updateCount(count) }
 
-        return Observable.mergeArray(sourceCreatedStates, appleCountStates)
+        val applePriceStates = intentions
+                .ofType(ApplePriceIntention::class.java)
+                .map { it.price }
+                .withLatestFrom(timeline) { price, state -> state.updatePrice(price) }
+
+        return Observable.mergeArray(sourceCreatedStates, appleCountStates, applePriceStates)
     }
 }

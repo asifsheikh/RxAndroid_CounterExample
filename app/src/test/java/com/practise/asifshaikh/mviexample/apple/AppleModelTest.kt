@@ -20,13 +20,30 @@ class AppleModelTest {
     }
 
     @Test
-    fun `when user increases apple count, then update the apple count`() {
+    fun `when user updates apple count, then update the apple count`() {
         //when
-        mviTestRule.startWith(AppleState.INITIAL) {
-            intentionsSubject.onNext(AppleCountIntention(5))
+        val count = 5
+        val startState = AppleState.INITIAL
+        mviTestRule.startWith(startState) {
+            intentionsSubject.onNext(AppleCountIntention(count))
         }
 
         // then
-        mviTestRule.assertStates(AppleState(5))
+        val updatedCountState = startState.updateCount(count)
+        mviTestRule.assertStates(updatedCountState)
+    }
+
+    @Test
+    fun `when user updates the apple price, then update the apple price`() {
+        //when
+        val price = 100
+        val startState = AppleState.INITIAL
+        mviTestRule.startWith(startState) {
+            intentionsSubject.onNext(ApplePriceIntention(price))
+        }
+
+        //then
+        val updatedPriceState = startState.updatePrice(price)
+        mviTestRule.assertStates(updatedPriceState)
     }
 }
