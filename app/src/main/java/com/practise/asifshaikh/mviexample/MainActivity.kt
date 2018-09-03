@@ -38,4 +38,8 @@ class MainActivity : OneWayActivity<CounterState>(), CounterView {
     override fun showCounter(counter: Int) {
         counterTextView.text = counter.toString()
     }
+
+    override fun showClicks(clicks: Int) {
+        clicksTextView.text = clicks.toString()
+    }
 }

@@ -7,8 +7,10 @@ import io.redgreen.oneway.drivers.ViewDriver
 
 class CounterViewDriver(private val view: CounterView) : ViewDriver<CounterState> {
     override fun render(source: Observable<CounterState>): Disposable {
-        return source
-                .map { it.counter }
-                .subscribe { counter -> view.showCounter(counter) }
+        return source.subscribe {
+            state ->
+            view.showCounter(state.counter)
+            view.showClicks(state.clicks)
+        }
     }
 }
