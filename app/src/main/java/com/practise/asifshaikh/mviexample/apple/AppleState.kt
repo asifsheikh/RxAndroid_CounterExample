@@ -1,7 +1,10 @@
 package com.practise.asifshaikh.mviexample.apple
 
-class AppleState {
+data class AppleState(val count: Int) {
     companion object {
-        val INITIAL = AppleState()
+        val INITIAL = AppleState(0)
     }
+
+    fun updateCount(count: Int): AppleState =
+            copy(count = count)
 }
