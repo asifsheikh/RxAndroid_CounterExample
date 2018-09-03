@@ -1,6 +1,13 @@
 package com.practise.asifshaikh.mviexample.apple
 
-data class AppleState(val count: Int, val price: Int) {
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
+data class AppleState(
+        val count: Int,
+        val price: Int
+): Parcelable {
     companion object {
         val INITIAL = AppleState(0, 0)
     }

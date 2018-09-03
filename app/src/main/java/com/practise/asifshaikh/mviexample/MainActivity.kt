@@ -2,7 +2,7 @@ package com.practise.asifshaikh.mviexample
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import com.practise.asifshaikh.mviexample.counter.CounterFragment
+import com.practise.asifshaikh.mviexample.apple.AppleFragment
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -12,7 +12,7 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             supportFragmentManager
                     .beginTransaction()
-                    .replace(R.id.containerLayout, CounterFragment())
+                    .replace(R.id.containerLayout, AppleFragment())
                     .commit()
         }
     }
