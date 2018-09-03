@@ -23,29 +23,29 @@ class CounterModelTest {
     @Test
     fun `when user presses +, increment counter by +1`() {
         // when
-        testRule.startWith(CounterState(5)) {
-            intentions.onNext(IncrementCounterIntention)
+        testRule.startWith(CounterState(5, 0)) {
+            clickIncrement()
         }
 
         // then
-        testRule.assertStates(CounterState(6))
+        testRule.assertStates(CounterState(6, 1))
     }
 
     @Test
     fun `when user presses -, decrement counter by -1`() {
         // when
-        testRule.startWith(CounterState(10)) {
-            intentions.onNext(DecrementCounterIntention)
+        testRule.startWith(CounterState(10, 0)) {
+            clickDecrement()
         }
 
         // then
-        testRule.assertStates(CounterState(9))
+        testRule.assertStates(CounterState(9, 1))
     }
 
     @Test
     fun `when source is restored, then emit last known state`() {
         // given
-        val lastKnownState = CounterState(-7)
+        val lastKnownState = CounterState(-7, 0)
         testRule.startWith(lastKnownState)
         testRule.sourceIsDestroyed()
 
@@ -54,5 +54,25 @@ class CounterModelTest {
 
         // then
         testRule.assertStates(lastKnownState)
+    }
+
+    @Test
+    fun `when user presses +, then increment click count`() {
+        // given
+        testRule.sourceIsCreated()
+
+        // when
+        clickIncrement()
+
+        // then
+        testRule.assertStates(CounterState.ZERO, CounterState(1, 1))
+    }
+
+    private fun clickDecrement() {
+        intentions.onNext(DecrementCounterIntention)
+    }
+
+    private fun clickIncrement() {
+        intentions.onNext(IncrementCounterIntention)
     }
 }

@@ -17,7 +17,7 @@ class CounterDriverTest {
 
         // when
         val disposable = viewDriver.render(sourceSubject)
-        sourceSubject.onNext(CounterState(counter))
+        sourceSubject.onNext(CounterState(counter, 0))
 
         // then
         verify(view).showCounter(counter)
