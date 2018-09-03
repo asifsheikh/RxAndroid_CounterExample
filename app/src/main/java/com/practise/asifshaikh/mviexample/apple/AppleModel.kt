@@ -24,6 +24,15 @@ object AppleModel {
                 .map { it.price }
                 .withLatestFrom(timeline) { price, state -> state.updatePrice(price) }
 
-        return Observable.mergeArray(sourceCreatedStates, appleCountStates, applePriceStates)
+        val sourceRestoredStates = sourceEvents
+                .filter { it == SourceEvent.RESTORED }
+                .withLatestFrom(timeline) { _, state -> state }
+
+        return Observable.mergeArray(
+                sourceCreatedStates,
+                sourceRestoredStates,
+                appleCountStates,
+                applePriceStates
+        )
     }
 }

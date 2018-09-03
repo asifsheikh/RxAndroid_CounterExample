@@ -46,4 +46,18 @@ class AppleModelTest {
         val updatedPriceState = startState.updatePrice(price)
         mviTestRule.assertStates(updatedPriceState)
     }
+
+    @Test
+    fun `when source is restored, then show last known state`() {
+        //given
+        val lastKnownState = AppleState(5, 10)
+        mviTestRule.startWith(lastKnownState)
+        mviTestRule.sourceIsDestroyed()
+
+        // when
+        mviTestRule.sourceIsRestored()
+
+        // then
+        mviTestRule.assertStates(lastKnownState)
+    }
 }
