@@ -68,6 +68,18 @@ class CounterModelTest {
         testRule.assertStates(CounterState.ZERO, CounterState(1, 1))
     }
 
+    @Test
+    fun `when user presses -, then increment click count`() {
+        // given
+        testRule.sourceIsCreated()
+
+        // when
+        clickDecrement()
+
+        // then
+        testRule.assertStates(CounterState.ZERO, CounterState(-1, 1))
+    }
+
     private fun clickDecrement() {
         intentions.onNext(DecrementCounterIntention)
     }
