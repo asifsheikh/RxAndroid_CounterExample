@@ -12,8 +12,8 @@ import org.junit.Test
 class FollowersModelTest {
     private val intentions = PublishSubject.create<FollowersIntention>()
     private val gitHubApi = mock<GitHubApi>()
-    private val mviTestRule = MviTestRule<FollowersState> { sourceEvents, _ ->
-        FollowersModel.createSource(sourceEvents, intentions, gitHubApi)
+    private val mviTestRule = MviTestRule<FollowersState> { sourceEvents, timeline ->
+        FollowersModel.createSource(sourceEvents, intentions, timeline, gitHubApi)
     }
 
     @Test
@@ -37,5 +37,25 @@ class FollowersModelTest {
         // then
         verify(gitHubApi).fetchFollowers()
         verifyNoMoreInteractions(gitHubApi)
+    }
+
+    @Test
+    fun `when 'Fetch' followers is successful, then show a list of followers`() {
+        // given
+        val followers = listOf(
+                User("1", "asif", "https://aws.amazon.com/asif.jpg"),
+                User("2", "sanyam", "https://aws.amazon.com/sanyam.jpg")
+        )
+        whenever(gitHubApi.fetchFollowers())
+                .thenReturn(Observable.just(followers))
+
+        // when
+        mviTestRule.startWith(FollowersState.INITIAL) {
+            intentions.onNext(FetchIntention)
+        }
+
+        // then
+        val fetchSuccessfulState = FollowersState.INITIAL.fetchSuccessful(followers)
+        mviTestRule.assertStates(fetchSuccessfulState)
     }
 }
