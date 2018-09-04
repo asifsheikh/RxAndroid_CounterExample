@@ -65,6 +65,16 @@ class FollowersViewDriverTest {
 
     @Test
     fun `it can render failed state`() {
+        //when
+        val fetchInFlightStatus = FollowersState.INITIAL.fetchInFlight()
+        sourceSubject.onNext(fetchInFlightStatus.fetchFailed())
+
+        //then
+        verify(view).removeLoading()
+        verify(view).enableFetchButton()
+        verify(view).showError()
+
+        verifyNoMoreInteractions(view)
 
     }
 }

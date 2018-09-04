@@ -19,7 +19,11 @@ class FollowersViewDriver(private val view: FollowersView) : ViewDriver<Follower
                     view.showLoading()
                     view.disableFetchButton()
                 }
-                NetworkStatus.FAILED -> TODO()
+                NetworkStatus.FAILED -> {
+                    view.removeLoading()
+                    view.showError()
+                    view.enableFetchButton()
+                }
                 null -> {}
             }
 

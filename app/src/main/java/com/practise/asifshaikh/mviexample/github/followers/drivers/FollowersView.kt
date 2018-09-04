@@ -6,4 +6,6 @@ interface FollowersView {
     fun removeLoading()
     fun showFollowersList()
     fun removeFetchButton()
+    fun enableFetchButton()
+    fun showError()
 }
