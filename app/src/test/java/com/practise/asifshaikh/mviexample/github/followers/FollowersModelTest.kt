@@ -58,4 +58,20 @@ class FollowersModelTest {
         val fetchSuccessfulState = FollowersState.INITIAL.fetchSuccessful(followers)
         mviTestRule.assertStates(fetchSuccessfulState)
     }
+
+    @Test
+    fun `when 'Fetch' followers fails, then show error`() {
+        // given
+        whenever(gitHubApi.fetchFollowers())
+                .thenReturn(Observable.error(RuntimeException("Asif, not creative enough!")))
+
+        // when
+        mviTestRule.startWith(FollowersState.INITIAL) {
+            intentions.onNext(FetchIntention)
+        }
+
+        // then
+        val fetchFailedState = FollowersState.INITIAL.fetchFailed()
+        mviTestRule.assertStates(fetchFailedState)
+    }
 }

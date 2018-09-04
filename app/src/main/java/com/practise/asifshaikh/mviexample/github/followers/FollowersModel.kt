@@ -1,5 +1,6 @@
 package com.practise.asifshaikh.mviexample.github.followers
 
+import arrow.core.Either
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.withLatestFrom
 import io.redgreen.oneway.SourceEvent
@@ -16,12 +17,26 @@ object FollowersModel {
 
         val fetchFollowersStates = intentions
                 .ofType(FetchIntention::class.java)
-                .switchMap { gitHubApi.fetchFollowers() }
-                .withLatestFrom(timeline) { followers, state -> state.fetchSuccessful(followers) }
+                .switchMap { makeFetchFollowersNetworkCall(gitHubApi) }
+                .withLatestFrom(timeline) { either, state -> reduceToFollowersState(state, either) }
 
         return Observable.mergeArray(
                 sourceCreatedStates,
                 fetchFollowersStates
         )
+    }
+
+    private fun makeFetchFollowersNetworkCall(gitHubApi: GitHubApi): Observable<Either<Throwable, List<User>>> {
+        return gitHubApi.fetchFollowers()
+                .map { followers -> Either.right(followers) as Either<Throwable, List<User>> }
+                .onErrorReturn { exception -> Either.left(exception) }
+    }
+
+    private fun reduceToFollowersState(
+            state: FollowersState,
+            either: Either<Throwable, List<User>>
+    ): FollowersState = when (either) {
+        is Either.Right -> state.fetchSuccessful(either.b)
+        is Either.Left -> state.fetchFailed()
     }
 }
