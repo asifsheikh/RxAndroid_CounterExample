@@ -82,4 +82,21 @@ class FollowersModelTest {
                 fetchFailedState
         )
     }
+
+    @Test
+    fun `when source is restored, then emit last known state`() {
+        // given
+        val asif = User("1", "asif", "https://aws.amazon.com/asif.jpg")
+        val oneFollowerState = FollowersState.INITIAL
+                .fetchSuccessful(listOf(asif))
+
+        // when
+        mviTestRule.startWith(oneFollowerState) {
+            mviTestRule.sourceIsDestroyed()
+            mviTestRule.sourceIsRestored()
+        }
+
+        // then
+        mviTestRule.assertStates(oneFollowerState)
+    }
 }
