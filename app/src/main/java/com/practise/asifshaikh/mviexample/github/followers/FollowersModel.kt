@@ -15,13 +15,18 @@ object FollowersModel {
     ): Observable<FollowersState> {
         val sourceCreatedStates = sourceEvents.compose(SourceCreatedUseCase(FollowersState.INITIAL))
 
-        val fetchFollowersStates = intentions
-                .ofType(FetchIntention::class.java)
+        val fetchIntentions = intentions.ofType(FetchIntention::class.java)
+
+        val fetchInFlightStates = fetchIntentions
+                .withLatestFrom(timeline) { _, state -> state.fetchInFlight() }
+
+        val fetchFollowersStates = fetchIntentions
                 .switchMap { makeFetchFollowersNetworkCall(gitHubApi) }
                 .withLatestFrom(timeline) { either, state -> reduceToFollowersState(state, either) }
 
         return Observable.mergeArray(
                 sourceCreatedStates,
+                fetchInFlightStates,
                 fetchFollowersStates
         )
     }

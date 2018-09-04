@@ -55,8 +55,12 @@ class FollowersModelTest {
         }
 
         // then
-        val fetchSuccessfulState = FollowersState.INITIAL.fetchSuccessful(followers)
-        mviTestRule.assertStates(fetchSuccessfulState)
+        val fetchInFlightState = FollowersState.INITIAL.fetchInFlight()
+        val fetchSuccessfulState = fetchInFlightState.fetchSuccessful(followers)
+        mviTestRule.assertStates(
+                fetchInFlightState,
+                fetchSuccessfulState
+        )
     }
 
     @Test
@@ -71,7 +75,11 @@ class FollowersModelTest {
         }
 
         // then
-        val fetchFailedState = FollowersState.INITIAL.fetchFailed()
-        mviTestRule.assertStates(fetchFailedState)
+        val fetchInFlightState = FollowersState.INITIAL.fetchInFlight()
+        val fetchFailedState = fetchInFlightState.fetchFailed()
+        mviTestRule.assertStates(
+                fetchInFlightState,
+                fetchFailedState
+        )
     }
 }
